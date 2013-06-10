@@ -1,0 +1,163 @@
+Aut@res : "Glenn Marin, Minor Diaz"
+
+
+include 'emu8086.inc'
+DEFINE_SCAN_NUM
+DEFINE_PRINT_STRING      ;Libraries
+DEFINE_PRINT_NUM
+DEFINE_PRINT_NUM_UNS
+DEFINE_GET_STRING
+
+jmp START
+name: "Calculator"   
+     linea2 db 0Ah, 0Dh,'$',10,13
+     Msg11 db 10,30, "                            ************************************************$" 
+     Msg12 db 10,30, "                               !!!!!!!!!!!!!!  % WELCOME %  !!!!!!!!!!!!!!$" 
+     Msg15 db 10,30,"                                 ************************************************$" 
+     Msg13 db "                              ",10,30,10,30
+     linea db 0Ah, 0Dh,'$',10,13,10,30
+     Msg17 db "                                        CALC_ASSEMBLER   ",10,13
+      
+num1   dw 0
+num2 dw 0
+Msg0 db 10,13, 'Write the first number: $ '
+Msg1 db 10,13, "Write the second number:  $ "      
+Msg2 db 10,13, "Specify the operator:  Suma(+) Resta(-) Multiplicacion(m)  Division(d) $" 
+Msg3 db 10,13, "The result is: $"   
+
+                                                                        
+opr db '?' 
+
+
+    
+
+
+START:
+mov dx, offset Msg11
+mov   ah,09h  		       
+int   21h			
+                  
+                  
+mov dx, offset Msg12
+mov ah,09h
+int 21h                        
+           
+mov dx,offset Msg15
+mov ah,09h                      ;WELCOME MESSAGE
+int 21h
+
+ 
+mov dx,offset Msg13
+mov ah,09h
+int 21h
+
+
+mov dx,offset Msg17
+mov ah,09h
+int 21h 
+
+REQUEST:
+ 
+call SCAN_NUM                 ;Request of the first number
+mov num1,cx
+
+
+             
+                
+   
+mov dx,offset Msg1     
+mov ah,09h                    ;Request of the second number
+int 21h 
+                                
+CALL SCAN_NUM
+mov num2,cx
+
+                                     
+                
+
+
+
+
+                      
+OPERADOR:  
+
+
+mov dx,offset Msg2                      
+mov ah,09h
+int 21h
+                                           ;Request of the operator
+mov ah,01h
+int 21h   
+mov opr,al   
+
+cmp opr,"+"
+JE SUMA 
+cmp opr,"-"
+JE RESTA                                   ;Compare of the operator
+cmp opr, "m"
+JE MULTIPLICACION
+cmp opr, "d"
+JE DIVISION
+
+
+SUMA:           
+                mov dx, offset Msg3        ;Print the answer message
+                mov   ah,09h			    	
+	            int   21h 
+	            
+                mov ax,num1                 ;Store the first value in the AX register               
+                add ax,num2                ;Plus the var num1 with var num2 			
+	            call PRINT_NUM             ;Print the result
+                je exit
+                                           ;End of the process
+
+RESTA:
+
+                mov dx, offset Msg3        
+                mov ah,09h
+                int 21h
+                
+                mov ax, num1               ;Store the first value in the AX register
+                sub ax, num2               ;Deduct value in the AX register
+                call print_num             ;Print the result
+                je exit
+               
+
+MULTIPLICACION:
+                mov dx, offset Msg3
+                mov ah,09h
+                int 21h
+                
+                mov ax, num1               ;Store the first value in the AX register
+                imul num2                  ;Multiply the second value in the AX register
+                call print_num
+                je exit
+                
+DIVISION:          
+                 mov dx, offset Msg3
+                 mov ah,09h
+                 int 21h
+                 
+                 mov dx,0                  ;Clean register
+                 mov ax, num1
+                 idiv num2                 ;Divide var num1 with  var num2 
+                  
+                       
+                call print_num  
+                je exit   
+                 
+         
+    
+
+exit:  
+
+
+                                                  
+mov ah, 0                                  ; Program end
+int 16h                                
+            
+   
+
+
+
+
